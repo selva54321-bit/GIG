@@ -1,8 +1,8 @@
-# GigShield: Parametric Protection & Yield for the Gig Economy
+# GigGuard: Parametric Protection & Yield for the Gig Economy
 
-**GigShield** is a zero-touch, parametric protection platform designed to solve the income volatility of gig workers (Swiggy, Zomato, Zepto) due to disruptive events like heavy rain, heatwaves, or high pollution. 
+**GigGuard** is a zero-touch, parametric protection platform designed to solve the income volatility of gig workers (Swiggy, Zomato, Zepto) due to disruptive events like heavy rain, heatwaves, or high pollution. 
 
-Unlike traditional insurance, **GigShield** combines insurance-like protection with an investment corpus (**GigCorpus**) to ensure workers either get paid for disruptions *or* build wealth over time.
+Unlike traditional insurance, **GigGuard** combines insurance-like protection with an investment corpus (**GigCorpus**) to ensure workers either get paid for disruptions *or* build wealth over time.
 
 ---
 
@@ -14,63 +14,86 @@ Unlike traditional insurance, **GigShield** combines insurance-like protection w
 ---
 
 ## 📂 Project Structure
-- `/services/core-backend`: Node.js/Express API (Insurance engine + Cron triggers).
+This is a monorepo containing everything needed for the GigGuard system:
+
+- `/apps/admin-dashboard`: React web app (Admin & Operations, Risk Hub, and **Worker Simulator**).
+- `/apps/worker-app`: React Native (Expo) mobile app for gig workers.
+- `/services/core-backend`: Node.js/Express API (Insurance engine, database schemas, cron triggers).
 - `/services/ml-fraud-engine`: Python FastAPI (XGBoost Pricing + GNN Risk Scoring).
-- `/apps/admin-dashboard`: React web app (Operations, Risk Hub, and **Worker Simulator**).
-- `/apps/worker-app`: React Native source (for future mobile deployment).
+- `/packages/shared`: Shared API services and mock data providers.
 
 ---
 
-## 🛠️ How to Run (Hackathon Demo Mode)
+## 🛠️ Local Setup & Development
 
 To run the complete integrated stack for a live demo:
 
 ### 1. Prerequisites
 - Docker & Docker Compose
-- Node.js (v18+) & Python (3.9+)
+- Node.js (v18+)
+- Python (3.9+)
 
 ### 2. One-Click Startup (Recommended)
 From the project root, run:
 ```bash
 docker-compose up -d --build
 ```
-*This will spin up the Node Backend, Python ML Service, PostgreSQL, and Redis.*
+*This will spin up the Node Backend, Python ML Service, and PostgreSQL databases.*
 
 ---
 
 ### 3. Manual Start (Developer Mode)
 
-If you prefer running services manually, open **four terminals**:
+If you prefer running services manually:
 
-**Terminal A: ML Engine (Python)**
-```bash
-cd services/ml-fraud-engine
-pip install -r requirements.txt
-python app/main.py
-```
-
-**Terminal B: Core Backend (Node)**
+**Terminal A: Core Backend (Node)**
 ```bash
 cd services/core-backend
 npm install
 npm start
 ```
 
-**Terminal C: Admin Dashboard & Simulator (Web)**
+**Terminal B: ML Engine (Python)**
+```bash
+cd services/ml-fraud-engine
+pip install -r requirements.txt
+python app/main.py
+```
+
+**Terminal C: Admin Dashboard (Web)**
 ```bash
 cd apps/admin-dashboard
 npm install
-npm start
+npm run start
 ```
-*Visit `http://localhost:3000` to view the unified demo.*
+*Visit `http://localhost:3000` to view the web dashboard.*
+
+**Terminal D: Worker App (Mobile)**
+```bash
+cd apps/worker-app
+npm install
+npm run start
+```
+
+---
+
+## 🌐 Deployment (Vercel & Docker/Render)
+
+### Deploying the Admin Dashboard to Vercel
+1. Import your GitHub repository to Vercel.
+2. Set the **Root Directory** to `apps/admin-dashboard`.
+3. Vercel will auto-detect Create React App. Click **Deploy**.
+
+### Deploying the Backend & ML Services
+The `/services/core-backend` and `/services/ml-fraud-engine` both have standard `Dockerfile`s configured. You can safely deploy these to platforms like **Render**, **Railway**, or **AWS/GCP** by linking the respective subdirectories to those services.
 
 ---
 
 ## 🎭 5-Minute Demo Script (Judges' Protocol)
 
-1.  **Open the Admin Dashboard**: `http://localhost:3000`.
+1.  **Open the Admin Dashboard**: Check the deployment or `http://localhost:3000`.
 2.  **Dashboard Hub**: Showcase the "Resource Liquidity" (GigCorpus performance) and "Investigation Hub".
-3.  **The Flip (Worker View)**: Click the **"Worker App"** button in the header. Show exactly what Ramesh (the driver) sees on his phone.
+3.  **The Flip (Worker View)**: Use the internal **"Worker App"** simulator button in the header. Show exactly what Ramesh (the driver) sees on his phone.
 4.  **Parametric Trigger**:
     - On the phone simulator, click **"REPORT AN INCIDENT"**.
     - Click **"YES, TRIGGER CLAIM"**.
