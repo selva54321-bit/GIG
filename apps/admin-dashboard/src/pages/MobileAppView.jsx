@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 /* ═══════════════════════════════════════════════════════════════════
-   GIGSHIELD — Complete Worker Mobile App
+   GIGGUARD — Complete Worker Mobile App
    All business logic, all screens, all interactions in one JSX file
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -400,7 +400,7 @@ function SplashScreen({ onDone }) {
         </div>
       </div>
       <div style={{ animation: "fadeUp .5s .7s ease both", textAlign: "center" }}>
-        <div style={{ fontSize: 36, fontWeight: 900, color: C.white, letterSpacing: -1 }}>GigShield</div>
+        <div style={{ fontSize: 36, fontWeight: 900, color: C.white, letterSpacing: -1 }}>GigGuard</div>
         <div style={{ fontSize: 13, color: C.dim, marginTop: 4 }}>Income protection for delivery workers</div>
       </div>
       <div style={{ animation: "fadeIn .5s 1.5s ease both", marginTop: 30 }}>
@@ -428,7 +428,7 @@ function LoginScreen({ onNext }) {
           boxShadow: `0 0 20px ${C.accentGlow}` }}>
           🛡️
         </div>
-        <div style={{ fontSize: 28, fontWeight: 800, color: C.white, lineHeight: 1.2 }}>Welcome to<br/>GigShield</div>
+        <div style={{ fontSize: 28, fontWeight: 800, color: C.white, lineHeight: 1.2 }}>Welcome to<br/>GigGuard</div>
         <div style={{ fontSize: 14, color: C.dim, marginTop: 8 }}>Your income safety net, every week.</div>
       </div>
 
@@ -1629,7 +1629,7 @@ function TopBar({ tab, worker, onProfile }) {
         <div style={{ width: 32, height: 32, borderRadius: 10, background: `linear-gradient(135deg, ${C.accent}, #FF9B35)`,
           display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🛡️</div>
         <div>
-          <div style={{ fontSize: 14, fontWeight: 800, color: C.white }}>GigShield</div>
+          <div style={{ fontSize: 14, fontWeight: 800, color: C.white }}>GigGuard</div>
           <div style={{ fontSize: 9, color: C.dim, letterSpacing: .4 }}>{["HOME","GIGSCORE","TRIGGERS","CLAIMS","CORPUS","POLICY"].find((_,i) => ["home","gigscore","triggers","claims","corpus","policy"][i] === tab) || "APP"}</div>
         </div>
       </div>

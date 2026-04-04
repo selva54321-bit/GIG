@@ -15,7 +15,7 @@ export default function Login() {
             <div style={{ width: 52, height: 52, borderRadius: 16, background: "linear-gradient(135deg, #9333EA, #D8B4FE)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <Shield size={28} color="#fff" />
             </div>
-            <span style={{ fontSize: 32, fontWeight: 800, color: COLORS.text, fontFamily: "'Sora', sans-serif" }}>GigShield</span>
+            <span style={{ fontSize: 32, fontWeight: 800, color: COLORS.text, fontFamily: "'Sora', sans-serif" }}>GigGuard</span>
           </div>
           <p style={{ color: COLORS.muted, fontSize: 14, margin: 0 }}>Income protection for India's delivery workers</p>
         </div>

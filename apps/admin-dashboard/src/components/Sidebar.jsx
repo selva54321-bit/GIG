@@ -33,7 +33,7 @@ export default function Sidebar() {
         <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg, #FF6B35, #FF9B35)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
           <Shield size={18} color="#fff" />
         </div>
-        {sidebarOpen && <span style={{ fontSize: 18, fontWeight: 800, whiteSpace: "nowrap" }}>GigShield</span>}
+        {sidebarOpen && <span style={{ fontSize: 18, fontWeight: 800, whiteSpace: "nowrap" }}>GigGuard</span>}
       </div>
 
       {sidebarOpen && role === "worker" && (
