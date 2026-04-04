@@ -54,7 +54,7 @@ export default function WorkerDashboard() {
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {triggers.map(tr => (
-              <div key={tr.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", background: "#0A1628", borderRadius: 10 }}>
+              <div key={tr.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 10 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span style={{ fontSize: 16 }}>{tr.icon}</span>
                   <span style={{ fontSize: 13, fontWeight: 600 }}>{tr.name}</span>
@@ -71,7 +71,7 @@ export default function WorkerDashboard() {
         <div style={s.card}>
           <h3 style={{ fontWeight: 700, fontSize: 15, marginBottom: 16 }}>GigScore Progress</h3>
           <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16 }}>
-            <div style={{ width: 80, height: 80, borderRadius: "50%", background: `conic-gradient(${tierColors[gigWorker.tier]} ${scoreProgress * 3.6}deg, #1E3A6E 0deg)`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <div style={{ width: 80, height: 80, borderRadius: "50%", background: `conic-gradient(${tierColors[gigWorker.tier]} ${scoreProgress * 3.6}deg, ${COLORS.border} 0deg)`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <div style={{ width: 62, height: 62, borderRadius: "50%", background: COLORS.card, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <span style={{ fontSize: 20, fontWeight: 800, color: tierColors[gigWorker.tier] }}>{gigWorker.gigScore}</span>
               </div>
@@ -99,7 +99,7 @@ export default function WorkerDashboard() {
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {gigWorker.claims.slice(0, 3).map(claim => (
-            <div key={claim.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", background: "#0A1628", borderRadius: 12 }}>
+            <div key={claim.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 12 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <div style={{ width: 36, height: 36, borderRadius: 10, background: COLORS.green + "22", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <CheckCircle size={16} color={COLORS.green} />

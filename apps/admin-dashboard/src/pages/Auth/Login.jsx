@@ -7,15 +7,15 @@ export default function Login() {
   const { setScreen, setRole, role } = useAppContext();
 
   return (
-    <div style={{ ...s.app, justifyContent: "center", alignItems: "center", background: "radial-gradient(ellipse at 30% 40%, #0D2B5E 0%, #060D1F 60%)" }}>
+    <div style={{ ...s.app, justifyContent: "center", alignItems: "center", background: `radial-gradient(ellipse at 30% 40%, ${COLORS.purple}22 0%, ${COLORS.bg} 60%)` }}>
       <div style={{ width: 420, display: "flex", flexDirection: "column", gap: 24 }}>
         {/* Logo */}
         <div style={{ textAlign: "center" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-            <div style={{ width: 52, height: 52, borderRadius: 16, background: "linear-gradient(135deg, #FF6B35, #FF9B35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: 52, height: 52, borderRadius: 16, background: "linear-gradient(135deg, #9333EA, #D8B4FE)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <Shield size={28} color="#fff" />
             </div>
-            <span style={{ fontSize: 32, fontWeight: 800, color: "#fff", fontFamily: "'Sora', sans-serif" }}>GigShield</span>
+            <span style={{ fontSize: 32, fontWeight: 800, color: COLORS.text, fontFamily: "'Sora', sans-serif" }}>GigShield</span>
           </div>
           <p style={{ color: COLORS.muted, fontSize: 14, margin: 0 }}>Income protection for India's delivery workers</p>
         </div>

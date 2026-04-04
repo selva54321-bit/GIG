@@ -38,12 +38,12 @@ export default function LiveTriggers() {
               </span>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <div style={{ background: "#0A1628", borderRadius: 8, padding: 10 }}>
-                <p style={{ color: COLORS.muted, fontSize: 10, marginBottom: 2 }}>THRESHOLD</p>
+              <div style={{ background: COLORS.bg, borderRadius: 8, padding: 10, border: `1px solid ${COLORS.border}` }}>
+                <p style={{ color: COLORS.muted, fontSize: 10, marginBottom: 2, fontWeight: 700 }}>THRESHOLD</p>
                 <p style={{ fontSize: 12, fontWeight: 600 }}>{tr.threshold}</p>
               </div>
-              <div style={{ background: "#0A1628", borderRadius: 8, padding: 10 }}>
-                <p style={{ color: COLORS.muted, fontSize: 10, marginBottom: 2 }}>CURRENT READING</p>
+              <div style={{ background: COLORS.bg, borderRadius: 8, padding: 10, border: `1px solid ${COLORS.border}` }}>
+                <p style={{ color: COLORS.muted, fontSize: 10, marginBottom: 2, fontWeight: 700 }}>CURRENT READING</p>
                 <p style={{ fontSize: 12, fontWeight: 600, color: tr.status === "triggered" ? COLORS.red : tr.status === "warning" ? COLORS.gold : COLORS.green }}>{tr.current}</p>
               </div>
             </div>
@@ -54,11 +54,11 @@ export default function LiveTriggers() {
 
             {/* Claim Progress */}
             {claimInProgress && tr.status === "triggered" && (
-              <div style={{ marginTop: 12, background: "#0A1628", borderRadius: 10, padding: 14 }}>
+              <div style={{ marginTop: 12, background: COLORS.bg, borderRadius: 10, padding: 14, border: `1px solid ${COLORS.border}` }}>
                 {["📡 Detecting disruption zone...", "🔍 Cross-validating with secondary source...", "📍 Confirming worker GPS zone...", "🤖 Running fraud detection (5 layers)...", "✅ Claim approved! Payout initiated."].map((stage, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, opacity: i <= claimStage ? 1 : 0.3, transition: "opacity 0.3s" }}>
                     <span style={{ fontSize: 12 }}>{i < claimStage ? "✅" : i === claimStage ? "⏳" : "⬜"}</span>
-                    <span style={{ fontSize: 12, color: i <= claimStage ? COLORS.text : COLORS.muted }}>{stage}</span>
+                    <span style={{ fontSize: 12, color: i <= claimStage ? COLORS.text : COLORS.muted, fontWeight: 500 }}>{stage}</span>
                   </div>
                 ))}
               </div>

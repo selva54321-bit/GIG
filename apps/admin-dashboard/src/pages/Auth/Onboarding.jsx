@@ -14,7 +14,7 @@ export default function Onboarding() {
   ];
 
   return (
-    <div style={{ ...s.app, justifyContent: "center", alignItems: "center", background: "radial-gradient(ellipse at 70% 30%, #0D2B5E 0%, #060D1F 60%)" }}>
+    <div style={{ ...s.app, justifyContent: "center", alignItems: "center", background: `radial-gradient(ellipse at 70% 30%, ${COLORS.purple}33 0%, ${COLORS.bg} 60%)` }}>
       <div style={{ width: 480 }}>
         {/* Progress */}
         <div style={{ display: "flex", gap: 8, marginBottom: 28 }}>
@@ -51,7 +51,7 @@ export default function Onboarding() {
 
           {onboardStep === 1 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-              <div style={{ background: "#0A1628", borderRadius: 14, padding: 18, border: `1px solid ${COLORS.border}` }}>
+              <div style={{ background: COLORS.surface, borderRadius: 14, padding: 18, border: `1px solid ${COLORS.border}` }}>
                 <p style={{ color: COLORS.accent, fontWeight: 700, fontSize: 13, margin: "0 0 12px" }}>🤖 AI Risk Profile Generated</p>
                 {[
                   ["Daily Avg. Income", "Rs. 720 / day"],
@@ -89,16 +89,16 @@ export default function Onboarding() {
                       <p style={{ color: COLORS.muted, fontSize: 11, margin: 0 }}>per week</p>
                     </div>
                   </div>
-                  <div style={{ marginTop: 10, padding: "8px 12px", background: COLORS.green + "22", borderRadius: 8, border: `1px solid ${COLORS.green}44` }}>
-                    <p style={{ color: COLORS.green, fontSize: 12, margin: 0, fontWeight: 600 }}>💰 GigCorpus Return: {plan.corpus}</p>
+                  <div style={{ marginTop: 10, padding: "8px 12px", background: COLORS.green + "15", borderRadius: 8, border: `1px solid ${COLORS.green}33` }}>
+                    <p style={{ color: COLORS.green, fontSize: 12, margin: 0, fontWeight: 700 }}>💰 {plan.corpus}</p>
                   </div>
                 </div>
               ))}
-              <div style={{ padding: 14, background: "#0A1628", borderRadius: 12, border: `1px solid ${COLORS.border}` }}>
-                <p style={{ color: COLORS.muted, fontSize: 12, margin: "0 0 8px" }}>PAYMENT METHOD</p>
+              <div style={{ padding: 14, background: COLORS.surface, borderRadius: 12, border: `1px solid ${COLORS.border}` }}>
+                <p style={{ color: COLORS.muted, fontSize: 12, fontWeight: 700, margin: "0 0 10px" }}>PAYMENT METHOD</p>
                 <div style={{ display: "flex", gap: 8 }}>
                   {["UPI Autopay", "Platform Wallet"].map(m => (
-                    <button key={m} style={{ flex: 1, padding: 10, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: "transparent", color: COLORS.muted, fontSize: 12, fontFamily: "'Sora', sans-serif", cursor: "pointer" }}>{m}</button>
+                    <button key={m} style={{ flex: 1, padding: 10, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.bg, color: COLORS.text, fontSize: 12, fontFamily: "'Sora', sans-serif", fontWeight: 600, cursor: "pointer", transition: "all 0.2s" }}>{m}</button>
                   ))}
                 </div>
               </div>
@@ -106,9 +106,9 @@ export default function Onboarding() {
           )}
 
           <div style={{ display: "flex", gap: 12, marginTop: 24 }}>
-            {onboardStep > 0 && <button style={s.btnGhost} onClick={() => setOnboardStep(p => p - 1)}>← Back</button>}
-            <button style={{ ...s.btn, flex: 1, padding: 15 }} onClick={() => {
-              if (onboardStep < 2) setOnboardStep(p => p + 1);
+              {onboardStep > 0 && <button style={{ ...s.btnGhost, padding: "12px 24px" }} onClick={() => setOnboardStep(p => p - 1)}>← Back</button>}
+              <button style={{ ...s.btn, flex: 1, padding: 15 }} onClick={() => {
+                if (onboardStep < 2) setOnboardStep(p => p + 1);
               else { setLoggedIn(true); setScreen("app"); setActiveTab("dashboard"); }
             }}>
               {onboardStep < 2 ? "Continue →" : "Activate Coverage 🚀"}

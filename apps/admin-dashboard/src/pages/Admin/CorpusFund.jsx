@@ -27,7 +27,7 @@ export default function CorpusFund() {
             ["Short-Duration Debt Funds", "10%", "Rs. 0.62 Cr", "7.45%", COLORS.gold],
             ["Overnight / Cash Buffer", "5%", "Rs. 0.31 Cr", "5.80%", COLORS.muted],
           ].map(([name, alloc, value, ret, color]) => (
-            <div key={name} style={{ display: "flex", alignItems: "center", gap: 14, padding: "10px 14px", background: "#0A1628", borderRadius: 10 }}>
+            <div key={name} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 16px", background: COLORS.bg, borderRadius: 10, border: `1px solid ${COLORS.border}` }}>
               <div style={{ width: 8, height: 36, borderRadius: 4, background: color }} />
               <div style={{ flex: 1 }}><p style={{ fontWeight: 600, fontSize: 13 }}>{name}</p></div>
               <span style={s.tag(color)}>{alloc}</span>

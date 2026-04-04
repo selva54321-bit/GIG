@@ -33,7 +33,7 @@ export default function Claims() {
         <h3 style={{ fontWeight: 700, fontSize: 15, marginBottom: 16 }}>All Claims</h3>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {gigWorker.claims.map(claim => (
-            <div key={claim.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", background: "#0A1628", borderRadius: 12, border: `1px solid ${COLORS.border}` }}>
+            <div key={claim.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", background: COLORS.bg, borderRadius: 12, border: `1px solid ${COLORS.border}` }}>
               <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
                 <div style={{ width: 44, height: 44, borderRadius: 12, background: COLORS.green + "22", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>
                   {claim.trigger.includes("Rain") ? "🌧️" : claim.trigger.includes("Heat") ? "🌡️" : claim.trigger.includes("AQI") ? "💨" : "🚫"}
@@ -52,20 +52,20 @@ export default function Claims() {
         </div>
       </div>
 
-      <div style={{ ...s.card, background: "linear-gradient(135deg, #1a1040, #112040)" }}>
+      <div style={{ ...s.card, background: `linear-gradient(135deg, ${COLORS.purple}15, ${COLORS.bg})` }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
-            <h3 style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Simulate Auto-Claim</h3>
+            <h3 style={{ fontWeight: 700, fontSize: 18, marginBottom: 4, color: COLORS.text }}>Simulate Auto-Claim</h3>
             <p style={{ color: COLORS.muted, fontSize: 13 }}>Watch the zero-touch claim flow in real-time</p>
           </div>
-          <button style={s.btn} onClick={simulateClaim}>▶ Run Simulation</button>
+          <button style={{ ...s.btn, display: "flex", alignItems: "center", gap: 8, padding: "12px 20px" }} onClick={simulateClaim}>▶ Run Simulation</button>
         </div>
         {claimInProgress && (
-          <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 6 }}>
+          <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 8 }}>
             {["📡 Trigger threshold crossed — AQI 412 detected in Koramangala", "🔄 Cross-validating with NDMA secondary source...", "📍 Worker GPS confirmed within disrupted zone", "🤖 Fraud Score: 12/100 — Auto-approved", "💸 Rs. 216 payout sent to UPI — Claim CLM-2899 CLOSED"].map((str, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", borderRadius: 8, background: i <= claimStage ? COLORS.green + "22" : "#0A1628", border: `1px solid ${i <= claimStage ? COLORS.green + "44" : COLORS.border}`, transition: "all 0.3s", opacity: i <= claimStage ? 1 : 0.4 }}>
-                <span style={{ fontSize: 12 }}>{i <= claimStage ? "✅" : "⬜"}</span>
-                <span style={{ fontSize: 12 }}>{str}</span>
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", borderRadius: 10, background: i <= claimStage ? COLORS.green + "15" : COLORS.surface, border: `1px solid ${i <= claimStage ? COLORS.green + "33" : COLORS.border}`, transition: "all 0.3s ease-out", opacity: i <= claimStage ? 1 : 0.5, transform: i <= claimStage ? "translateX(0)" : "translateX(20px)" }}>
+                <span style={{ fontSize: 14 }}>{i <= claimStage ? "✅" : "⏳"}</span>
+                <span style={{ fontSize: 14, color: i <= claimStage ? COLORS.text : COLORS.muted, fontWeight: i <= claimStage ? 600 : 500 }}>{str}</span>
               </div>
             ))}
           </div>

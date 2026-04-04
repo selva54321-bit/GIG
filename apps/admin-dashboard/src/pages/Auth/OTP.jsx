@@ -19,10 +19,10 @@ export default function OTP() {
   };
 
   return (
-    <div style={{ ...s.app, justifyContent: "center", alignItems: "center", background: "radial-gradient(ellipse at 30% 40%, #0D2B5E 0%, #060D1F 60%)" }}>
+    <div style={{ ...s.app, justifyContent: "center", alignItems: "center", background: `radial-gradient(ellipse at 30% 40%, ${COLORS.purple}22 0%, ${COLORS.bg} 60%)` }}>
       <div style={{ width: 400, ...s.card, padding: 36, borderRadius: 24 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
-          <div style={{ width: 44, height: 44, borderRadius: 12, background: "linear-gradient(135deg, #FF6B35, #FF9B35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ width: 44, height: 44, borderRadius: 12, background: "linear-gradient(135deg, #9333EA, #D8B4FE)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Shield size={22} color="#fff" />
           </div>
           <span style={{ fontSize: 22, fontWeight: 800 }}>GigShield</span>
@@ -37,8 +37,8 @@ export default function OTP() {
               ref={otpRefs[i]}
               maxLength={1}
               style={{
-                width: 60, height: 60, textAlign: "center", background: "#0A1628", border: `2px solid ${otp[i] ? COLORS.accent : COLORS.border}`,
-                borderRadius: 14, color: COLORS.text, fontSize: 22, fontWeight: 700, fontFamily: "'Sora', sans-serif", outline: "none"
+                width: 60, height: 60, textAlign: "center", background: COLORS.bg, border: `2px solid ${otp[i] ? COLORS.accent : COLORS.border}`,
+                borderRadius: 14, color: COLORS.text, fontSize: 22, fontWeight: 700, fontFamily: "'Sora', sans-serif", outline: "none", transition: "border 0.2s"
               }}
               value={otp[i]}
               onChange={(e) => {

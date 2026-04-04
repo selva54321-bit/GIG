@@ -18,7 +18,7 @@ export default function FraudQueue() {
             { id: "CLM-2888", worker: "Priya R.", trigger: "Curfew", score: 45, flags: ["New account <14 days"], status: "review" },
             { id: "CLM-2876", worker: "Amit S.", trigger: "Flash Flood", score: 82, flags: ["Network cluster fraud", "Same device as 4 others"], status: "reject" },
           ].map(item => (
-            <div key={item.id} style={{ padding: "14px 16px", background: "#0A1628", borderRadius: 12, border: `1px solid ${item.score > 70 ? COLORS.red : COLORS.gold}44` }}>
+            <div key={item.id} style={{ padding: "14px 16px", background: COLORS.bg, borderRadius: 12, border: `1px solid ${item.score > 70 ? COLORS.red : COLORS.gold}66` }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                 <div>
                   <p style={{ fontWeight: 700 }}>{item.worker} <span style={{ color: COLORS.muted, fontSize: 12 }}>· {item.id}</span></p>

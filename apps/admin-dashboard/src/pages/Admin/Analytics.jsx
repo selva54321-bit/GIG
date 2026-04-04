@@ -61,8 +61,8 @@ export default function Analytics() {
             const risk = [0.2, 0.35, 0.7, 0.85, 0.6, 0.4, 0.25][i];
             const color = risk > 0.7 ? COLORS.red : risk > 0.4 ? COLORS.gold : COLORS.green;
             return (
-              <div key={day} style={{ textAlign: "center", background: "#0A1628", borderRadius: 10, padding: "12px 6px", border: `1px solid ${color}44` }}>
-                <p style={{ color: COLORS.muted, fontSize: 10, marginBottom: 6 }}>{day}</p>
+              <div key={day} style={{ textAlign: "center", background: COLORS.bg, borderRadius: 10, padding: "12px 6px", border: `1px solid ${color}44` }}>
+                <p style={{ color: COLORS.muted, fontSize: 10, marginBottom: 6, fontWeight: 600 }}>{day}</p>
                 <div style={{ height: 60, display: "flex", alignItems: "flex-end", justifyContent: "center", marginBottom: 6 }}>
                   <div style={{ width: 20, height: `${risk * 100}%`, background: color, borderRadius: 4, opacity: 0.8 }} />
                 </div>
