@@ -67,7 +67,7 @@ export default function GigScore() {
               ["-50", "Fraudulent claim detected", COLORS.red],
             ].map(([pts, action, color]) => (
               <div key={action} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: "#0A1628", borderRadius: 8 }}>
-                <span style={{ color: COLORS.text, fontSize: 13 }}>{action}</span>
+                <span style={{ color: "#fff", fontSize: 13 }}>{action}</span>
                 <span style={{ color, fontWeight: 700, fontSize: 13 }}>{pts} pts</span>
               </div>
             ))}
