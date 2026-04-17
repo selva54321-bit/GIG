@@ -8,6 +8,7 @@ const { query } = require('./db/client');
 const authRoutes = require('./routes/authRoutes');
 const policyRoutes = require('./routes/policyRoutes');
 const { claims, gigscore, corpus } = require('./routes/placeholders');
+const adminRoutes = require('./routes/adminRoutes');
 const { startTriggerMonitor } = require('./services/triggerMonitor');
 
 const app = express();
@@ -47,6 +48,7 @@ app.use('/api/policy', policyRoutes);
 app.use('/api/claims', claims);
 app.use('/api/gigscore', gigscore);
 app.use('/api/corpus', corpus);
+app.use('/api/admin', adminRoutes);
 
 app.listen(PORT, () => {
   console.log(`GigShield Core Backend running on port ${PORT}`);
