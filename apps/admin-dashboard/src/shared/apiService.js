@@ -31,8 +31,19 @@ export const claimService = {
   getClaims: () => api.get('/claims')
 };
 
+export const gigScoreService = {
+  getCurrent: () => api.get('/gigscore')
+};
+
 export const corpusService = {
   getStats: () => api.get('/corpus')
+};
+
+export const adminService = {
+  getAnalyticsSummary: () => api.get('/admin/analytics/summary'),
+  getFraudQueue: () => api.get('/admin/fraud-queue'),
+  getLiveTriggers: () => api.get('/admin/triggers/live'),
+  getCorpusSummary: () => api.get('/admin/corpus/summary')
 };
 
 export default api;

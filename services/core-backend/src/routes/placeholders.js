@@ -4,6 +4,7 @@ const gigscoreRouter = express.Router();
 const corpusRouter = express.Router();
 const { query } = require('../db/client');
 const { calculateMaturity } = require('../services/corpusService');
+const { getErrorMessage } = require('../utils/errors');
 
 function getPhoneNumber(req) {
   return req.user?.phone_number || '+919876543210';
@@ -49,7 +50,7 @@ claimsRouter.get('/', async (req, res) => {
       })),
     });
   } catch (dbError) {
-    console.error('[Claims] DB unavailable, serving fallback response:', dbError.message);
+    console.error('[Claims] DB unavailable, serving fallback response:', getErrorMessage(dbError));
 
     return res.json({
       success: true,
@@ -102,7 +103,7 @@ gigscoreRouter.get('/', async (req, res) => {
       })),
     });
   } catch (dbError) {
-    console.error('[GigScore] DB unavailable, serving fallback response:', dbError.message);
+    console.error('[GigScore] DB unavailable, serving fallback response:', getErrorMessage(dbError));
 
     return res.json({
       success: true,
@@ -166,7 +167,7 @@ corpusRouter.get('/', async (req, res) => {
       latest_maturity: ledgerAgg.rows[0].latest_maturity,
     });
   } catch (dbError) {
-    console.error('[Corpus] DB unavailable, serving fallback response:', dbError.message);
+    console.error('[Corpus] DB unavailable, serving fallback response:', getErrorMessage(dbError));
 
     return res.json({
       success: true,
