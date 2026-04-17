@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   triggerStatuses,
   gigWorker,
@@ -7,26 +7,10 @@ import {
   premiumData,
   lossRatioData,
 } from "../data/mockData";
-import {
-  authService,
-  policyService,
-  claimService,
-  gigScoreService,
-  corpusService,
-  adminService,
-} from "../shared/apiService";
 
 const AppContext = createContext();
 
-const TRIGGER_LABELS = {
-  RAIN: "Heavy Rain",
-  HEAT: "Extreme Heat",
-  AQI: "Severe AQI",
-  CURFEW: "Curfew / Lockdown",
-  FLOOD: "Flash Flood",
-};
-
-const TIER_ORDER = ["Bronze", "Silver", "Gold", "Platinum"];
+const DEMO_VALID_OTPS = ["1111", "123456"];
 
 const DEFAULT_ANALYTICS = {
   active_policies: 10247,
@@ -53,211 +37,37 @@ const DEFAULT_CORPUS_SUMMARY = {
   ],
 };
 
-function normalizeTier(rawTier, score) {
-  if (TIER_ORDER.includes(rawTier)) return rawTier;
+const DEFAULT_POLICY = {
+  id: "GS-KA-2026-9876",
+  premium: gigWorker.policy.weeklyPremium,
+  starts: "2026-01-06T00:00:00.000Z",
+  ends: "2026-12-30T23:59:59.000Z",
+  status: "ACTIVE",
+};
 
-  const mapped = {
-    Elite: "Platinum",
-    Pro: "Gold",
-    Standard: "Silver",
-    Risk: "Bronze",
+const DEFAULT_API_SOURCES = {
+  auth: "mock",
+  policy: "mock",
+  claims: "mock",
+  gigscore: "mock",
+  corpus: "mock",
+  analytics: "mock",
+  fraud: "mock",
+  adminCorpus: "mock",
+  triggers: "mock",
+};
+
+function cloneTriggers() {
+  return triggerStatuses.map((item) => ({ ...item }));
+}
+
+function withPhone(profile, phoneNumber) {
+  return {
+    ...profile,
+    phone: phoneNumber || profile.phone,
+    policy: { ...profile.policy },
+    claims: profile.claims.map((item) => ({ ...item })),
   };
-
-  if (mapped[rawTier]) return mapped[rawTier];
-
-  if (score >= 800) return "Platinum";
-  if (score >= 600) return "Gold";
-  if (score >= 400) return "Silver";
-  return "Bronze";
-}
-
-function maxPayoutByTier(tier) {
-  const payoutMap = {
-    Bronze: 500,
-    Silver: 750,
-    Gold: 1000,
-    Platinum: 1500,
-  };
-
-  return payoutMap[tier] || 750;
-}
-
-function formatClaimDate(dateValue) {
-  if (!dateValue) return "";
-  const d = new Date(dateValue);
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("en-IN", { month: "short", day: "2-digit", year: "numeric" });
-}
-
-function mapClaimStatus(status) {
-  const map = {
-    APPROVED: "Paid",
-    REJECTED: "Rejected",
-    FRAUD_FLAGGED: "Review",
-    PENDING: "Pending",
-  };
-
-  return map[status] || status || "Pending";
-}
-
-function mapClaimsToUi(claims, fallbackZone) {
-  if (!Array.isArray(claims) || claims.length === 0) return gigWorker.claims;
-
-  return claims.map((claim, idx) => ({
-    id: claim.id || `CLM-${1000 + idx}`,
-    trigger: TRIGGER_LABELS[claim.trigger_event] || claim.trigger || "Disruption",
-    date: formatClaimDate(claim.created_at) || claim.date || "--",
-    amount: Number(claim.claim_amount ?? claim.amount ?? 0),
-    status: mapClaimStatus(claim.status),
-    zone: claim.zone || fallbackZone,
-  }));
-}
-
-function buildScoreHistory(history, score) {
-  if (!Array.isArray(history) || history.length === 0) return scoreHistory;
-
-  const sorted = [...history].reverse();
-  return sorted.map((item, index) => ({
-    week: `W${index + 1}`,
-    score: Number(item.score),
-  }));
-}
-
-function buildPremiumHistory(weeklyPremium) {
-  const premium = Number(weeklyPremium || gigWorker.policy.weeklyPremium);
-  return [
-    { week: "W1", premium, tier: "Bronze" },
-    { week: "W4", premium, tier: "Bronze" },
-    { week: "W8", premium, tier: "Silver" },
-    { week: "W12", premium, tier: "Silver" },
-    { week: "W16", premium, tier: "Silver" },
-    { week: "W18", premium, tier: "Silver" },
-  ];
-}
-
-function buildCorpusGrowth(balance, finalPayout) {
-  const start = Math.max(0, Number(balance || gigWorker.corpusInvested));
-  const end = Math.max(start, Number(finalPayout || gigWorker.corpusReturn));
-  const span = end - start;
-  const steps = [0.12, 0.28, 0.45, 0.63, 0.82, 1.0];
-
-  return steps.map((step, index) => {
-    const value = start + span * step;
-    return {
-      week: `W${(index + 1) * 3}`,
-      corpus: Number((value / 12).toFixed(2)),
-      cumulative: Number(value.toFixed(2)),
-    };
-  });
-}
-
-function deriveWeeksToMaturity(latestMaturity, fallbackWeeks) {
-  if (!latestMaturity) return fallbackWeeks;
-  const d = new Date(latestMaturity);
-  if (Number.isNaN(d.getTime())) return fallbackWeeks;
-  const diffMs = d.getTime() - Date.now();
-  const diffWeeks = Math.ceil(diffMs / (1000 * 60 * 60 * 24 * 7));
-  return Math.max(0, diffWeeks);
-}
-
-function normalizeTriggerStatus(status) {
-  if (status === "triggered" || status === "warning" || status === "safe") return status;
-  return "safe";
-}
-
-function mapLiveTriggersToCards(apiPayload) {
-  const zones = apiPayload?.triggers;
-  if (!Array.isArray(zones) || zones.length === 0) return triggerStatuses;
-
-  const zone = zones[0];
-  const govtAlerts = Array.isArray(zone.govt_alerts) ? zone.govt_alerts : [];
-  return [
-    {
-      id: "T1",
-      name: "Heavy Rain",
-      icon: "🌧️",
-      api: "OpenWeatherMap / IMD",
-      threshold: ">64.5mm / 24h",
-      current: `${zone.weather?.rain_mm ?? 0}mm`,
-      status: normalizeTriggerStatus(zone.statuses?.rain),
-      payout: "50–80%",
-      color: "#3B82F6",
-    },
-    {
-      id: "T2",
-      name: "Extreme Heat",
-      icon: "🌡️",
-      api: "IMD Heat API / NDMA",
-      threshold: ">45°C with advisory",
-      current: `${zone.weather?.temperature ?? 0}°C`,
-      status: normalizeTriggerStatus(zone.statuses?.heat),
-      payout: "30–50%",
-      color: "#F59E0B",
-    },
-    {
-      id: "T3",
-      name: "Severe AQI",
-      icon: "💨",
-      api: "CPCB Safar API",
-      threshold: "AQI >400 for 3+hrs",
-      current: `AQI ${zone.aqi?.aqi ?? 0}`,
-      status: normalizeTriggerStatus(zone.statuses?.aqi),
-      payout: "25–40%",
-      color: "#8B5CF6",
-    },
-    {
-      id: "T4",
-      name: "Curfew / Lockdown",
-      icon: "🚫",
-      api: "State Govt. API + Platform",
-      threshold: "Official order issued",
-      current: govtAlerts.includes("MOVEMENT_RESTRICTED") ? "Order issued" : "No alerts",
-      status: normalizeTriggerStatus(zone.statuses?.curfew),
-      payout: "80–100%",
-      color: "#EF4444",
-    },
-    {
-      id: "T5",
-      name: "Flash Flood",
-      icon: "🌊",
-      api: "NDMA Flood Alert API",
-      threshold: "Level-3 flood alert",
-      current: govtAlerts.includes("FLOOD_WARNING") ? "Flood warning" : "No alert",
-      status: normalizeTriggerStatus(zone.statuses?.flood),
-      payout: "80–100%",
-      color: "#06B6D4",
-    },
-  ];
-}
-
-function formatCompactAmount(value) {
-  const num = Number(value || 0);
-  if (num >= 10000000) return `${(num / 10000000).toFixed(1)} Cr`;
-  if (num >= 100000) return `${(num / 100000).toFixed(1)} L`;
-  return num.toLocaleString("en-IN");
-}
-
-function mapFraudQueueForUi(queue) {
-  if (!Array.isArray(queue) || queue.length === 0) return DEFAULT_FRAUD_QUEUE;
-
-  return queue.map((item, index) => {
-    const score = Math.round(Number(item.fraud_score || 0));
-    const userSuffix = String(item.phone_number || "0000").slice(-4);
-
-    return {
-      id: item.id || `CLM-${index + 1}`,
-      worker: `Worker ${userSuffix}`,
-      trigger: TRIGGER_LABELS[item.trigger_event] || item.trigger_event || "Unknown",
-      score,
-      flags:
-        item.status === "FRAUD_FLAGGED"
-          ? ["Fraud risk flagged", `Risk score ${score}/100`]
-          : item.status === "PENDING"
-            ? ["Pending manual review"]
-            : ["Investigate pattern"],
-      status: score >= 70 ? "reject" : "review",
-    };
-  });
 }
 
 export function AppProvider({ children }) {
@@ -266,208 +76,86 @@ export function AppProvider({ children }) {
   const [role, setRole] = useState("worker");
   const [activeTab, setActiveTab] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [triggers, setTriggers] = useState(triggerStatuses);
+  const [triggers, setTriggers] = useState(cloneTriggers);
   const [alertBanner, setAlertBanner] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState(gigWorker.phone);
   const [authLoading, setAuthLoading] = useState(false);
-  const [dataLoading, setDataLoading] = useState(false);
+  const [dataLoading] = useState(false);
   const [lastError, setLastError] = useState(null);
 
-  const [workerProfile, setWorkerProfile] = useState(gigWorker);
-  const [claimsData, setClaimsData] = useState(gigWorker.claims);
-  const [scoreHistoryData, setScoreHistoryData] = useState(scoreHistory);
-  const [premiumHistoryData, setPremiumHistoryData] = useState(premiumData);
-  const [corpusGrowthData, setCorpusGrowthData] = useState(corpusData);
-  const [policyData, setPolicyData] = useState(null);
+  const [workerProfile, setWorkerProfile] = useState(withPhone(gigWorker, gigWorker.phone));
+  const [claimsData, setClaimsData] = useState(gigWorker.claims.map((item) => ({ ...item })));
+  const [scoreHistoryData, setScoreHistoryData] = useState(scoreHistory.map((item) => ({ ...item })));
+  const [premiumHistoryData, setPremiumHistoryData] = useState(premiumData.map((item) => ({ ...item })));
+  const [corpusGrowthData, setCorpusGrowthData] = useState(corpusData.map((item) => ({ ...item })));
+  const [policyData, setPolicyData] = useState({ ...DEFAULT_POLICY });
 
-  const [analyticsSummary, setAnalyticsSummary] = useState(DEFAULT_ANALYTICS);
-  const [analyticsSeries] = useState(lossRatioData);
-  const [fraudQueueData, setFraudQueueData] = useState(DEFAULT_FRAUD_QUEUE);
-  const [adminCorpusSummary, setAdminCorpusSummary] = useState(DEFAULT_CORPUS_SUMMARY);
-
-  const [apiSources, setApiSources] = useState({
-    auth: "mock",
-    policy: "mock",
-    claims: "mock",
-    gigscore: "mock",
-    corpus: "mock",
-    analytics: "mock",
-    fraud: "mock",
-    adminCorpus: "mock",
-    triggers: "mock",
+  const [analyticsSummary, setAnalyticsSummary] = useState({ ...DEFAULT_ANALYTICS });
+  const [analyticsSeries] = useState(lossRatioData.map((item) => ({ ...item })));
+  const [fraudQueueData, setFraudQueueData] = useState(DEFAULT_FRAUD_QUEUE.map((item) => ({ ...item, flags: [...item.flags] })));
+  const [adminCorpusSummary, setAdminCorpusSummary] = useState({
+    ...DEFAULT_CORPUS_SUMMARY,
+    portfolio: DEFAULT_CORPUS_SUMMARY.portfolio.map((item) => ({ ...item })),
   });
+  const [apiSources] = useState({ ...DEFAULT_API_SOURCES });
 
-  const raiseAutoClaimBanner = (triggerName) => {
-    const nextAlert = {
-      trigger: triggerName,
-      amount: 216,
-      id: `CLM-${String(Date.now()).slice(-4)}`,
-    };
+  useEffect(() => {
+    setWorkerProfile((prev) => ({ ...prev, phone: phoneNumber || gigWorker.phone }));
+  }, [phoneNumber]);
 
-    setAlertBanner(nextAlert);
-    setTimeout(() => setAlertBanner(null), 8000);
-  };
+  useEffect(() => {
+    if (!loggedIn) return;
 
-  const fetchTriggerData = async () => {
-    try {
-      const response = await adminService.getLiveTriggers();
-      const source = response?.data?.source || "database";
-      const mapped = mapLiveTriggersToCards(response?.data);
-
+    const intervalRef = setInterval(() => {
       setTriggers((prev) => {
-        const newlyTriggered = mapped.find((tr, idx) => tr.status === "triggered" && prev[idx]?.status !== "triggered");
-        if (newlyTriggered) {
-          raiseAutoClaimBanner(newlyTriggered.name);
+        const next = prev.map((item) => ({ ...item, status: "safe" }));
+        const selected = Math.floor(Math.random() * next.length);
+        const riskLevel = Math.random();
+
+        if (riskLevel > 0.7) {
+          const status = riskLevel > 0.88 ? "triggered" : "warning";
+          next[selected].status = status;
+
+          if (status === "triggered") {
+            const payout = Math.min(workerProfile.policy.maxPayout, Math.max(180, Math.round(workerProfile.dailyAvg * 0.7)));
+            const nextAlert = {
+              trigger: next[selected].name,
+              amount: payout,
+              id: `CLM-${String(Date.now()).slice(-4)}`,
+            };
+            setAlertBanner(nextAlert);
+            setTimeout(() => setAlertBanner(null), 8000);
+          }
+        } else {
+          const aqi = next.find((item) => item.name === "Severe AQI");
+          if (aqi) aqi.status = "warning";
         }
-        return mapped;
+
+        return next;
       });
+    }, 20000);
 
-      setApiSources((prev) => ({ ...prev, triggers: source }));
-    } catch (error) {
-      setApiSources((prev) => ({ ...prev, triggers: "mock" }));
-      setTriggers(triggerStatuses);
-    }
-  };
-
-  const fetchWorkerData = async () => {
-    const [policyResp, claimsResp, gigResp, corpusResp] = await Promise.allSettled([
-      policyService.activePolicy(),
-      claimService.getClaims(),
-      gigScoreService.getCurrent(),
-      corpusService.getStats(),
-    ]);
-
-    const profile = {
-      ...gigWorker,
-      phone: phoneNumber || gigWorker.phone,
-      policy: { ...gigWorker.policy },
-    };
-
-    let resolvedPolicyData = null;
-    let resolvedClaims = gigWorker.claims;
-    let resolvedScoreHistory = scoreHistory;
-    let resolvedPremiumHistory = premiumData;
-    let resolvedCorpusHistory = corpusData;
-
-    if (policyResp.status === "fulfilled") {
-      const payload = policyResp.value.data;
-      const policy = payload?.policy;
-      setApiSources((prev) => ({ ...prev, policy: payload?.source || "database" }));
-
-      if (policy) {
-        const premium = Number(policy.premium || profile.policy.weeklyPremium);
-        profile.policy.weeklyPremium = premium;
-        resolvedPremiumHistory = buildPremiumHistory(premium);
-        resolvedPolicyData = policy;
-      }
-    } else {
-      setApiSources((prev) => ({ ...prev, policy: "mock" }));
-    }
-
-    if (gigResp.status === "fulfilled") {
-      const payload = gigResp.value.data;
-      const score = Number(payload?.current_score || profile.gigScore);
-      const tier = normalizeTier(payload?.tier, score);
-
-      profile.gigScore = score;
-      profile.tier = tier;
-      profile.policy.maxPayout = maxPayoutByTier(tier);
-      resolvedScoreHistory = buildScoreHistory(payload?.history, score);
-      setApiSources((prev) => ({ ...prev, gigscore: payload?.source || "database" }));
-    } else {
-      setApiSources((prev) => ({ ...prev, gigscore: "mock" }));
-    }
-
-    if (claimsResp.status === "fulfilled") {
-      const payload = claimsResp.value.data;
-      resolvedClaims = mapClaimsToUi(payload?.claims, profile.zone);
-      setApiSources((prev) => ({ ...prev, claims: payload?.source || "database" }));
-    } else {
-      setApiSources((prev) => ({ ...prev, claims: "mock" }));
-    }
-
-    if (corpusResp.status === "fulfilled") {
-      const payload = corpusResp.value.data;
-      const balance = Number(payload?.balance ?? profile.corpusInvested);
-      const finalPayout = Number(payload?.projected_final_payout ?? (balance + Number(payload?.projected_yield || 0)));
-
-      profile.corpusInvested = Number(balance.toFixed(2));
-      profile.corpusReturn = Number(finalPayout.toFixed(2));
-      profile.weeksToMaturity = deriveWeeksToMaturity(payload?.latest_maturity, profile.weeksToMaturity);
-
-      resolvedCorpusHistory = buildCorpusGrowth(profile.corpusInvested, profile.corpusReturn);
-      setApiSources((prev) => ({ ...prev, corpus: payload?.source || "database" }));
-    } else {
-      setApiSources((prev) => ({ ...prev, corpus: "mock" }));
-    }
-
-    setWorkerProfile(profile);
-    setPolicyData(resolvedPolicyData);
-    setClaimsData(resolvedClaims);
-    setScoreHistoryData(resolvedScoreHistory);
-    setPremiumHistoryData(resolvedPremiumHistory);
-    setCorpusGrowthData(resolvedCorpusHistory);
-  };
-
-  const fetchAdminData = async () => {
-    const [analyticsResp, fraudResp, corpusResp] = await Promise.allSettled([
-      adminService.getAnalyticsSummary(),
-      adminService.getFraudQueue(),
-      adminService.getCorpusSummary(),
-    ]);
-
-    if (analyticsResp.status === "fulfilled") {
-      const payload = analyticsResp.value.data;
-      setAnalyticsSummary(payload?.summary || DEFAULT_ANALYTICS);
-      setApiSources((prev) => ({ ...prev, analytics: payload?.source || "database" }));
-    } else {
-      setAnalyticsSummary(DEFAULT_ANALYTICS);
-      setApiSources((prev) => ({ ...prev, analytics: "mock" }));
-    }
-
-    if (fraudResp.status === "fulfilled") {
-      const payload = fraudResp.value.data;
-      setFraudQueueData(mapFraudQueueForUi(payload?.queue));
-      setApiSources((prev) => ({ ...prev, fraud: payload?.source || "database" }));
-    } else {
-      setFraudQueueData(DEFAULT_FRAUD_QUEUE);
-      setApiSources((prev) => ({ ...prev, fraud: "mock" }));
-    }
-
-    if (corpusResp.status === "fulfilled") {
-      const payload = corpusResp.value.data;
-      setAdminCorpusSummary(payload?.summary || DEFAULT_CORPUS_SUMMARY);
-      setApiSources((prev) => ({ ...prev, adminCorpus: payload?.source || "database" }));
-    } else {
-      setAdminCorpusSummary(DEFAULT_CORPUS_SUMMARY);
-      setApiSources((prev) => ({ ...prev, adminCorpus: "mock" }));
-    }
-  };
+    return () => clearInterval(intervalRef);
+  }, [loggedIn, workerProfile.dailyAvg, workerProfile.policy.maxPayout]);
 
   const verifyOtpCode = async (otpCode) => {
     setAuthLoading(true);
     setLastError(null);
 
-    try {
-      const response = await authService.verifyOTP(phoneNumber, otpCode);
-      const payload = response?.data;
+    const normalized = String(otpCode || "").trim();
 
-      if (!payload?.success || !payload?.token) {
-        setLastError(payload?.message || "OTP verification failed.");
-        return { success: false, message: payload?.message || "OTP verification failed." };
-      }
+    await new Promise((resolve) => setTimeout(resolve, 450));
 
-      localStorage.setItem("token", payload.token);
-      setApiSources((prev) => ({ ...prev, auth: "database" }));
-      return { success: true };
-    } catch (error) {
-      const message = error?.response?.data?.message || "Unable to verify OTP right now.";
+    if (!DEMO_VALID_OTPS.includes(normalized)) {
+      const message = "Invalid OTP. Use 1111 for demo login.";
       setLastError(message);
-      setApiSources((prev) => ({ ...prev, auth: "mock" }));
-      return { success: false, message };
-    } finally {
       setAuthLoading(false);
+      return { success: false, message };
     }
+
+    localStorage.setItem("token", "showcase_demo_token");
+    setAuthLoading(false);
+    return { success: true };
   };
 
   const signOut = () => {
@@ -478,64 +166,53 @@ export function AppProvider({ children }) {
     setActiveTab("dashboard");
     setAlertBanner(null);
     setLastError(null);
-    setWorkerProfile(gigWorker);
-    setClaimsData(gigWorker.claims);
-    setScoreHistoryData(scoreHistory);
-    setPremiumHistoryData(premiumData);
-    setCorpusGrowthData(corpusData);
-    setPolicyData(null);
-    setAnalyticsSummary(DEFAULT_ANALYTICS);
-    setFraudQueueData(DEFAULT_FRAUD_QUEUE);
-    setAdminCorpusSummary(DEFAULT_CORPUS_SUMMARY);
-    setTriggers(triggerStatuses);
+    setTriggers(cloneTriggers());
+
+    setWorkerProfile(withPhone(gigWorker, phoneNumber || gigWorker.phone));
+    setClaimsData(gigWorker.claims.map((item) => ({ ...item })));
+    setScoreHistoryData(scoreHistory.map((item) => ({ ...item })));
+    setPremiumHistoryData(premiumData.map((item) => ({ ...item })));
+    setCorpusGrowthData(corpusData.map((item) => ({ ...item })));
+    setPolicyData({ ...DEFAULT_POLICY });
+
+    setAnalyticsSummary({ ...DEFAULT_ANALYTICS });
+    setFraudQueueData(DEFAULT_FRAUD_QUEUE.map((item) => ({ ...item, flags: [...item.flags] })));
+    setAdminCorpusSummary({
+      ...DEFAULT_CORPUS_SUMMARY,
+      portfolio: DEFAULT_CORPUS_SUMMARY.portfolio.map((item) => ({ ...item })),
+    });
   };
 
-  useEffect(() => {
-    if (!loggedIn) return;
-
-    let active = true;
-
-    const load = async () => {
-      if (!active) return;
-      setDataLoading(true);
-
-      try {
-        if (role === "worker") {
-          await fetchWorkerData();
-        } else {
-          await fetchAdminData();
-        }
-
-        await fetchTriggerData();
-      } catch (error) {
-        setLastError("Unable to refresh live data. Showing fallback snapshot.");
-      } finally {
-        if (active) setDataLoading(false);
-      }
-    };
-
-    load();
-    const intervalRef = setInterval(load, 30000);
-
-    return () => {
-      active = false;
-      clearInterval(intervalRef);
-    };
-  }, [loggedIn, role]);
-
   const value = {
-    screen, setScreen,
-    loggedIn, setLoggedIn,
-    role, setRole,
-    activeTab, setActiveTab,
-    sidebarOpen, setSidebarOpen,
-    triggers, setTriggers,
-    alertBanner, setAlertBanner,
-    phoneNumber, setPhoneNumber,
-    workerProfile, claimsData, scoreHistoryData, premiumHistoryData, corpusGrowthData,
+    screen,
+    setScreen,
+    loggedIn,
+    setLoggedIn,
+    role,
+    setRole,
+    activeTab,
+    setActiveTab,
+    sidebarOpen,
+    setSidebarOpen,
+    triggers,
+    setTriggers,
+    alertBanner,
+    setAlertBanner,
+    phoneNumber,
+    setPhoneNumber,
+    workerProfile,
+    claimsData,
+    scoreHistoryData,
+    premiumHistoryData,
+    corpusGrowthData,
     policyData,
-    analyticsSummary, analyticsSeries, fraudQueueData, adminCorpusSummary,
-    authLoading, dataLoading, lastError,
+    analyticsSummary,
+    analyticsSeries,
+    fraudQueueData,
+    adminCorpusSummary,
+    authLoading,
+    dataLoading,
+    lastError,
     apiSources,
     verifyOtpCode,
     signOut,
