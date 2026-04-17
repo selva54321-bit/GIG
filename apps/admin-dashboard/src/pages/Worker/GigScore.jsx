@@ -11,10 +11,10 @@ export default function GigScore() {
   return (
     <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 20 }}>
       {/* Score Hero */}
-      <div style={{ ...s.card, background: `linear-gradient(135deg, #112040 0%, #0D1B35 100%)`, position: "relative", overflow: "hidden", padding: 32 }}>
+      <div style={{ ...s.card, background: `linear-gradient(135deg, ${COLORS.purple}14 0%, ${COLORS.bg} 100%)`, position: "relative", overflow: "hidden", padding: 32 }}>
         <div style={{ position: "absolute", top: -40, right: -40, width: 200, height: 200, borderRadius: "50%", background: `${tierColors[gigWorker.tier]}11`, border: `1px solid ${tierColors[gigWorker.tier]}22` }} />
         <div style={{ display: "flex", gap: 40, alignItems: "center" }}>
-          <div style={{ width: 130, height: 130, borderRadius: "50%", background: `conic-gradient(${tierColors[gigWorker.tier]} ${scoreProgress * 3.6}deg, #1E3A6E 0deg)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ width: 130, height: 130, borderRadius: "50%", background: `conic-gradient(${tierColors[gigWorker.tier]} ${scoreProgress * 3.6}deg, ${COLORS.border} 0deg)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <div style={{ width: 106, height: 106, borderRadius: "50%", background: COLORS.card, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
               <span style={{ fontSize: 30, fontWeight: 800, color: tierColors[gigWorker.tier] }}>{gigWorker.gigScore}</span>
               <span style={{ fontSize: 11, color: COLORS.muted }}>GigScore</span>
@@ -66,8 +66,8 @@ export default function GigScore() {
               ["+100", "12-month anniversary", COLORS.accent],
               ["-50", "Fraudulent claim detected", COLORS.red],
             ].map(([pts, action, color]) => (
-              <div key={action} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: "#0A1628", borderRadius: 8 }}>
-                <span style={{ color: "#fff", fontSize: 13 }}>{action}</span>
+              <div key={action} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 8 }}>
+                <span style={{ color: COLORS.text, fontSize: 13, fontWeight: 500 }}>{action}</span>
                 <span style={{ color, fontWeight: 700, fontSize: 13 }}>{pts} pts</span>
               </div>
             ))}

@@ -9,7 +9,7 @@ export default function GigCorpus() {
   return (
     <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 20 }}>
       {/* Hero */}
-      <div style={{ ...s.card, background: "linear-gradient(135deg, #0D2B5E 0%, #112040 100%)", padding: 28 }}>
+      <div style={{ ...s.card, background: `linear-gradient(135deg, ${COLORS.purple}14 0%, ${COLORS.bg} 100%)`, padding: 28 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <p style={{ color: COLORS.muted, fontSize: 12, fontWeight: 600, letterSpacing: 1 }}>GIGCORPUS FUND</p>
