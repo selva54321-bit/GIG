@@ -3,9 +3,10 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Award } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
 import { COLORS, s, tierColors, tierNext, tierThreshold } from "../../theme/theme";
-import { gigWorker, scoreHistory } from "../../data/mockData";
 
 export default function GigScore() {
+  const { workerProfile, scoreHistoryData } = useAppContext();
+  const gigWorker = workerProfile;
   const scoreProgress = Math.min(100, ((gigWorker.gigScore - (gigWorker.tier === "Silver" ? 100 : 0)) / (tierThreshold[gigWorker.tier] - (gigWorker.tier === "Silver" ? 100 : 0))) * 100);
 
   return (
@@ -43,7 +44,7 @@ export default function GigScore() {
         <div style={s.card}>
           <h3 style={{ fontWeight: 700, fontSize: 15, marginBottom: 16 }}>Score Growth (18 Weeks)</h3>
           <ResponsiveContainer width="100%" height={180}>
-            <AreaChart data={scoreHistory}>
+            <AreaChart data={scoreHistoryData}>
               <defs><linearGradient id="sg2" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={COLORS.gold} stopOpacity={0.4}/><stop offset="95%" stopColor={COLORS.gold} stopOpacity={0}/></linearGradient></defs>
               <CartesianGrid strokeDasharray="3 3" stroke={COLORS.border} />
               <XAxis dataKey="week" stroke={COLORS.muted} fontSize={10} />

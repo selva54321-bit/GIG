@@ -3,10 +3,10 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Shield, CreditCard, Star, TrendingUp, CheckCircle, Zap } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
 import { COLORS, s, tierColors, tierNext, tierThreshold } from "../../theme/theme";
-import { gigWorker, scoreHistory } from "../../data/mockData";
 
 export default function WorkerDashboard() {
-  const { alertBanner, triggers } = useAppContext();
+  const { alertBanner, triggers, workerProfile, scoreHistoryData, claimsData } = useAppContext();
+  const gigWorker = workerProfile;
   const scoreProgress = Math.min(100, ((gigWorker.gigScore - (gigWorker.tier === "Silver" ? 100 : 0)) / (tierThreshold[gigWorker.tier] - (gigWorker.tier === "Silver" ? 100 : 0))) * 100);
 
   return (
@@ -83,7 +83,7 @@ export default function WorkerDashboard() {
             </div>
           </div>
           <ResponsiveContainer width="100%" height={90}>
-            <AreaChart data={scoreHistory}>
+            <AreaChart data={scoreHistoryData}>
               <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={COLORS.gold} stopOpacity={0.3}/><stop offset="95%" stopColor={COLORS.gold} stopOpacity={0}/></linearGradient></defs>
               <Area type="monotone" dataKey="score" stroke={COLORS.gold} strokeWidth={2} fill="url(#sg)" dot={false} />
               <Tooltip contentStyle={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 8, color: COLORS.text, fontSize: 11 }} />
@@ -98,7 +98,7 @@ export default function WorkerDashboard() {
           <button style={{ ...s.btnGhost, padding: "6px 14px", fontSize: 12 }}>View all</button>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {gigWorker.claims.slice(0, 3).map(claim => (
+          {claimsData.slice(0, 3).map(claim => (
             <div key={claim.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 12 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <div style={{ width: 36, height: 36, borderRadius: 10, background: COLORS.green + "22", display: "flex", alignItems: "center", justifyContent: "center" }}>

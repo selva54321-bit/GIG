@@ -4,7 +4,7 @@ import { COLORS, s } from "../../theme/theme";
 import { Shield } from "lucide-react";
 
 export default function Login() {
-  const { setScreen, setRole, role } = useAppContext();
+  const { setScreen, setRole, role, phoneNumber, setPhoneNumber, lastError } = useAppContext();
 
   return (
     <div style={{ ...s.app, justifyContent: "center", alignItems: "center", background: `radial-gradient(ellipse at 30% 40%, ${COLORS.purple}22 0%, ${COLORS.bg} 60%)` }}>
@@ -32,7 +32,14 @@ export default function Login() {
           </div>
 
           <label style={{ color: COLORS.muted, fontSize: 12, fontWeight: 600, letterSpacing: 1 }}>MOBILE NUMBER</label>
-          <input style={{ ...s.input, marginTop: 8, marginBottom: 16 }} placeholder="+91 98765 43210" defaultValue="+91 98765 43210" />
+          <input
+            style={{ ...s.input, marginTop: 8, marginBottom: 16 }}
+            placeholder="+91 98765 43210"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+          />
+
+          {lastError && <p style={{ color: COLORS.red, fontSize: 12, marginBottom: 12 }}>{lastError}</p>}
 
           <button style={{ ...s.btn, width: "100%", padding: "15px", fontSize: 15 }} onClick={() => setScreen("otp")}>
             Get OTP →

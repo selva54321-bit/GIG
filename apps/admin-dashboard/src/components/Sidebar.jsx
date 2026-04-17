@@ -1,13 +1,12 @@
 import React from "react";
 import { useAppContext } from "../context/AppContext";
 import { 
-  BarChart2, Radio, AlertCircle, TrendingUp, Home, Star, FileText, CheckCircle, LogOut, Shield, Smartphone
+  BarChart2, Radio, AlertCircle, TrendingUp, Home, Star, FileText, CheckCircle, LogOut, Shield
 } from "lucide-react";
 import { COLORS, s, tierColors } from "../theme/theme";
-import { gigWorker } from "../data/mockData";
 
 export default function Sidebar() {
-  const { role, activeTab, setActiveTab, sidebarOpen, setScreen } = useAppContext();
+  const { role, activeTab, setActiveTab, sidebarOpen, signOut, workerProfile } = useAppContext();
 
   const navItems = role === "admin"
     ? [
@@ -15,11 +14,9 @@ export default function Sidebar() {
         { id: "triggers_admin", icon: <Radio size={18} />, label: "Live Triggers" },
         { id: "fraud", icon: <AlertCircle size={18} />, label: "Fraud Queue" },
         { id: "corpus_admin", icon: <TrendingUp size={18} />, label: "Corpus Fund" },
-        { id: "mobile_preview", icon: <Smartphone size={18} />, label: "Mobile Preview" },
       ]
     : [
         { id: "dashboard", icon: <Home size={18} />, label: "Dashboard" },
-        { id: "mobile_preview", icon: <Smartphone size={18} />, label: "Mobile App" },
         { id: "gigscore", icon: <Star size={18} />, label: "GigScore" },
         { id: "policy", icon: <FileText size={18} />, label: "My Policy" },
         { id: "triggers", icon: <Radio size={18} />, label: "Live Triggers" },
@@ -39,10 +36,10 @@ export default function Sidebar() {
       {sidebarOpen && role === "worker" && (
         <div style={{ padding: "16px", borderBottom: `1px solid ${COLORS.border}` }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 38, height: 38, borderRadius: 10, background: `${tierColors[gigWorker.tier]}33`, border: `2px solid ${tierColors[gigWorker.tier]}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>👷</div>
+            <div style={{ width: 38, height: 38, borderRadius: 10, background: `${tierColors[workerProfile.tier]}33`, border: `2px solid ${tierColors[workerProfile.tier]}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>👷</div>
             <div>
-              <p style={{ fontWeight: 700, fontSize: 13 }}>{gigWorker.name}</p>
-              <p style={{ color: tierColors[gigWorker.tier], fontSize: 11, fontWeight: 600 }}>● {gigWorker.tier} · {gigWorker.platform}</p>
+              <p style={{ fontWeight: 700, fontSize: 13 }}>{workerProfile.name}</p>
+              <p style={{ color: tierColors[workerProfile.tier], fontSize: 11, fontWeight: 600 }}>● {workerProfile.tier} · {workerProfile.platform}</p>
             </div>
           </div>
         </div>
@@ -58,7 +55,7 @@ export default function Sidebar() {
       </nav>
 
       <div style={{ padding: "12px 8px", borderTop: `1px solid ${COLORS.border}` }}>
-        <button onClick={() => setScreen("login")} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 12px", borderRadius: 10, border: "none", background: "transparent", color: COLORS.muted, fontFamily: "'Sora', sans-serif", fontSize: 13, cursor: "pointer", width: "100%" }}>
+        <button onClick={signOut} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 12px", borderRadius: 10, border: "none", background: "transparent", color: COLORS.muted, fontFamily: "'Sora', sans-serif", fontSize: 13, cursor: "pointer", width: "100%" }}>
           <LogOut size={18} />{sidebarOpen && "Sign Out"}
         </button>
       </div>

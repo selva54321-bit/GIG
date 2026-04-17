@@ -4,11 +4,27 @@ import { COLORS, s } from "../../theme/theme";
 import { Shield } from "lucide-react";
 
 export default function OTP() {
-  const { setScreen, setLoggedIn, role, setActiveTab } = useAppContext();
+  const {
+    setScreen,
+    setLoggedIn,
+    role,
+    setActiveTab,
+    verifyOtpCode,
+    authLoading,
+    phoneNumber,
+    lastError,
+  } = useAppContext();
   const [otp, setOtp] = useState(["", "", "", ""]);
   const otpRefs = [useRef(), useRef(), useRef(), useRef()];
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
+    const enteredOtp = otp.join("");
+    const verifyResult = await verifyOtpCode(enteredOtp);
+
+    if (!verifyResult.success) {
+      return;
+    }
+
     if (role === "worker") {
       setScreen("onboard");
     } else {
@@ -28,7 +44,7 @@ export default function OTP() {
           <span style={{ fontSize: 22, fontWeight: 800 }}>GigShield</span>
         </div>
         <h2 style={{ margin: "0 0 8px", fontSize: 22, fontWeight: 700 }}>Enter OTP</h2>
-        <p style={{ color: COLORS.muted, fontSize: 13, marginBottom: 28 }}>Sent to +91 98765 43210</p>
+        <p style={{ color: COLORS.muted, fontSize: 13, marginBottom: 28 }}>Sent to {phoneNumber}</p>
 
         <div style={{ display: "flex", gap: 12, marginBottom: 28, justifyContent: "center" }}>
           {[0, 1, 2, 3].map((i) => (
@@ -51,8 +67,10 @@ export default function OTP() {
           ))}
         </div>
 
-        <button style={{ ...s.btn, width: "100%", padding: 15, fontSize: 15 }} onClick={handleVerify}>
-          Verify & Continue →
+        {lastError && <p style={{ color: COLORS.red, fontSize: 12, marginBottom: 12 }}>{lastError}</p>}
+
+        <button style={{ ...s.btn, width: "100%", padding: 15, fontSize: 15 }} onClick={handleVerify} disabled={authLoading}>
+          {authLoading ? "Verifying..." : "Verify & Continue →"}
         </button>
         <button style={{ ...s.btnGhost, width: "100%", marginTop: 12 }} onClick={() => setScreen("login")}>
           ← Back

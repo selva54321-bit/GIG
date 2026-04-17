@@ -1,10 +1,24 @@
 import React, { useState } from "react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { useAppContext } from "../../context/AppContext";
 import { COLORS, s } from "../../theme/theme";
-import { gigWorker, corpusData } from "../../data/mockData";
 
 export default function GigCorpus() {
+  const { workerProfile, corpusGrowthData, adminCorpusSummary } = useAppContext();
+  const gigWorker = workerProfile;
   const [withdrawOption, setWithdrawOption] = useState(null);
+
+  const portfolioRows = Array.isArray(adminCorpusSummary?.portfolio)
+    ? adminCorpusSummary.portfolio
+    : [
+      { name: "G-Secs", weight: 0.4 },
+      { name: "RBI Bonds", weight: 0.25 },
+      { name: "Liquid Funds", weight: 0.2 },
+      { name: "Debt Funds", weight: 0.1 },
+      { name: "Cash", weight: 0.05 },
+    ];
+
+  const portfolioColors = ["#10B981", "#3B82F6", "#8B5CF6", "#F5A623", "#6B8CC7"];
 
   return (
     <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 20 }}>
@@ -33,7 +47,7 @@ export default function GigCorpus() {
         <div style={s.card}>
           <h3 style={{ fontWeight: 700, fontSize: 15, marginBottom: 16 }}>Corpus Growth</h3>
           <ResponsiveContainer width="100%" height={180}>
-            <AreaChart data={corpusData}>
+            <AreaChart data={corpusGrowthData}>
               <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={COLORS.gold} stopOpacity={0.4}/><stop offset="95%" stopColor={COLORS.gold} stopOpacity={0}/></linearGradient></defs>
               <CartesianGrid strokeDasharray="3 3" stroke={COLORS.border} />
               <XAxis dataKey="week" stroke={COLORS.muted} fontSize={10} />
@@ -49,20 +63,22 @@ export default function GigCorpus() {
           <h3 style={{ fontWeight: 700, fontSize: 15, marginBottom: 16 }}>Portfolio Allocation</h3>
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <PieChart width={130} height={130}>
-              <Pie data={[{v:40},{v:25},{v:20},{v:10},{v:5}]} dataKey="v" cx={60} cy={60} innerRadius={35} outerRadius={60}>
-                {["#10B981","#3B82F6","#8B5CF6","#F5A623","#6B8CC7"].map((c,i) => <Cell key={i} fill={c} />)}
+              <Pie data={portfolioRows.map((item) => ({ v: Number((item.weight || 0) * 100) }))} dataKey="v" cx={60} cy={60} innerRadius={35} outerRadius={60}>
+                {portfolioColors.map((c,i) => <Cell key={i} fill={c} />)}
               </Pie>
             </PieChart>
             <div style={{ flex: 1 }}>
-              {[["G-Secs", "40%", "#10B981"], ["RBI Bonds", "25%", "#3B82F6"], ["Liquid MF", "20%", "#8B5CF6"], ["Debt Funds", "10%", "#F5A623"], ["Overnight", "5%", "#6B8CC7"]].map(([n, p, c]) => (
+              {portfolioRows.map((item, index) => {
+                const color = portfolioColors[index % portfolioColors.length];
+                return (
                 <div key={n} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <span style={{ width: 8, height: 8, borderRadius: 2, background: c }} />
-                    <span style={{ fontSize: 11, color: COLORS.muted }}>{n}</span>
+                    <span style={{ width: 8, height: 8, borderRadius: 2, background: color }} />
+                    <span style={{ fontSize: 11, color: COLORS.muted }}>{item.name}</span>
                   </div>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: c }}>{p}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color }}>{Math.round(Number(item.weight || 0) * 100)}%</span>
                 </div>
-              ))}
+              );})}
               <p style={{ color: COLORS.green, fontSize: 11, fontWeight: 700, marginTop: 6 }}>Avg. 7.2% p.a. return</p>
             </div>
           </div>

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import { useAppContext } from "../../context/AppContext";
 import { COLORS, s } from "../../theme/theme";
-import { gigWorker } from "../../data/mockData";
 
 export default function Claims() {
+  const { claimsData } = useAppContext();
   const [claimInProgress, setClaimInProgress] = useState(false);
   const [claimStage, setClaimStage] = useState(0);
 
@@ -18,9 +19,9 @@ export default function Claims() {
     <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 20 }}>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
         {[
-          { label: "Total Claimed", value: `Rs. ${gigWorker.claims.reduce((a, c) => a + c.amount, 0).toLocaleString()}`, icon: "💰", color: COLORS.green },
-          { label: "Claims This Year", value: gigWorker.claims.length, icon: "📋", color: COLORS.blue },
-          { label: "Income Protected", value: "Rs. 1,728", icon: "🛡️", color: COLORS.accent },
+          { label: "Total Claimed", value: `Rs. ${claimsData.reduce((a, c) => a + Number(c.amount || 0), 0).toLocaleString()}`, icon: "💰", color: COLORS.green },
+          { label: "Claims This Year", value: claimsData.length, icon: "📋", color: COLORS.blue },
+          { label: "Income Protected", value: `Rs. ${claimsData.reduce((a, c) => a + Number(c.amount || 0), 0).toLocaleString()}`, icon: "🛡️", color: COLORS.accent },
         ].map(st => (
           <div key={st.label} style={s.stat}>
             <p style={{ color: COLORS.muted, fontSize: 11, fontWeight: 600 }}>{st.label.toUpperCase()}</p>
@@ -32,7 +33,7 @@ export default function Claims() {
       <div style={s.card}>
         <h3 style={{ fontWeight: 700, fontSize: 15, marginBottom: 16 }}>All Claims</h3>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {gigWorker.claims.map(claim => (
+          {claimsData.map(claim => (
             <div key={claim.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", background: COLORS.bg, borderRadius: 12, border: `1px solid ${COLORS.border}` }}>
               <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
                 <div style={{ width: 44, height: 44, borderRadius: 12, background: COLORS.green + "22", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>

@@ -13,7 +13,7 @@ router.post('/verify', (req, res) => {
     return res.status(400).json({ success: false, message: 'phone_number is required.' });
   }
 
-  if (otp === '123456') {
+  if (otp === '123456' || otp === '1111') {
     const tokenValue = `mock_worker_${normalizedPhone.replace(/\D/g, '').slice(-10)}`;
 
     return res.status(200).json({
