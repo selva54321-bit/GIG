@@ -9,7 +9,7 @@ export default function Topbar() {
   const labels = {
     dashboard: "Dashboard", gigscore: "GigScore", policy: "My Policy",
     triggers: "Live Triggers", claims: "Claims", corpus: "GigCorpus",
-    admin: "Analytics", triggers_admin: "Live Triggers", fraud: "Fraud Queue", corpus_admin: "Corpus Fund"
+    admin: "Analytics", triggers_admin: "Live Triggers", fraud: "Fraud Queue", corpus_admin: "Corpus Fund", mobile_preview: "Mobile Preview"
   };
 
   return (

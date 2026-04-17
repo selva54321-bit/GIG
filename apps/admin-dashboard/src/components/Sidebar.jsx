@@ -1,7 +1,7 @@
 import React from "react";
 import { useAppContext } from "../context/AppContext";
 import { 
-  BarChart2, Radio, AlertCircle, TrendingUp, Home, Star, FileText, CheckCircle, LogOut, Shield
+  BarChart2, Radio, AlertCircle, TrendingUp, Home, Star, FileText, CheckCircle, LogOut, Shield, Smartphone
 } from "lucide-react";
 import { COLORS, s, tierColors } from "../theme/theme";
 
@@ -14,6 +14,7 @@ export default function Sidebar() {
         { id: "triggers_admin", icon: <Radio size={18} />, label: "Live Triggers" },
         { id: "fraud", icon: <AlertCircle size={18} />, label: "Fraud Queue" },
         { id: "corpus_admin", icon: <TrendingUp size={18} />, label: "Corpus Fund" },
+        { id: "mobile_preview", icon: <Smartphone size={18} />, label: "Mobile Preview" },
       ]
     : [
         { id: "dashboard", icon: <Home size={18} />, label: "Dashboard" },
@@ -22,6 +23,7 @@ export default function Sidebar() {
         { id: "triggers", icon: <Radio size={18} />, label: "Live Triggers" },
         { id: "claims", icon: <CheckCircle size={18} />, label: "Claims" },
         { id: "corpus", icon: <TrendingUp size={18} />, label: "GigCorpus" },
+        { id: "mobile_preview", icon: <Smartphone size={18} />, label: "Mobile Preview" },
       ];
 
   return (

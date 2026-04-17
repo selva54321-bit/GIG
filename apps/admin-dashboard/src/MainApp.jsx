@@ -13,6 +13,7 @@ import GigCorpus from "./pages/Worker/GigCorpus";
 import Analytics from "./pages/Admin/Analytics";
 import FraudQueue from "./pages/Admin/FraudQueue";
 import CorpusFund from "./pages/Admin/CorpusFund";
+import MobileAppView from "./pages/MobileAppView";
 
 import { useAppContext } from "./context/AppContext";
 import Layout from "./components/Layout";
@@ -32,6 +33,7 @@ export default function MainApp() {
       {activeTab === "claims" && <Claims />}
       {activeTab === "corpus" && <GigCorpus />}
       {activeTab === "triggers" && <LiveTriggers />}
+      {activeTab === "mobile_preview" && <MobileAppView />}
       
       {activeTab === "admin" && <Analytics />}
       {activeTab === "triggers_admin" && <LiveTriggers />}
