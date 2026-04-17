@@ -1,9 +1,12 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const authMiddleware = require('./middleware/auth');
 const rateLimiter = require('./middleware/rateLimiter');
 const { query } = require('./db/client');
+const { initializeDatabase } = require('./db/init');
 
 const authRoutes = require('./routes/authRoutes');
 const policyRoutes = require('./routes/policyRoutes');
@@ -50,7 +53,13 @@ app.use('/api/gigscore', gigscore);
 app.use('/api/corpus', corpus);
 app.use('/api/admin', adminRoutes);
 
-app.listen(PORT, () => {
-  console.log(`GigShield Core Backend running on port ${PORT}`);
-  startTriggerMonitor();
-});
+async function bootstrap() {
+  await initializeDatabase();
+
+  app.listen(PORT, () => {
+    console.log(`GigShield Core Backend running on port ${PORT}`);
+    startTriggerMonitor();
+  });
+}
+
+bootstrap();
