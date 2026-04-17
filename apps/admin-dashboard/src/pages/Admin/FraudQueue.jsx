@@ -1,11 +1,17 @@
 import React from "react";
+import { useAppContext } from "../../context/AppContext";
 import { COLORS, s } from "../../theme/theme";
 
 export default function FraudQueue() {
+  const { fraudQueueData } = useAppContext();
+  const pendingReview = fraudQueueData.filter((item) => item.status !== "reject").length;
+  const rejectedThisWeek = fraudQueueData.filter((item) => item.status === "reject").length;
+  const autoApprovedToday = Math.max(0, 500 - pendingReview - rejectedThisWeek);
+
   return (
     <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 20 }}>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
-        {[["Pending Review", "23", COLORS.gold], ["Auto-Approved Today", "412", COLORS.green], ["Rejected This Week", "7", COLORS.red]].map(([l,v,c]) => (
+        {[["Pending Review", pendingReview, COLORS.gold], ["Auto-Approved Today", autoApprovedToday, COLORS.green], ["Rejected This Week", rejectedThisWeek, COLORS.red]].map(([l,v,c]) => (
           <div key={l} style={s.stat}><p style={{ color: COLORS.muted, fontSize: 11 }}>{l.toUpperCase()}</p><p style={{ fontSize: 30, fontWeight: 800, color: c }}>{v}</p></div>
         ))}
       </div>
@@ -13,11 +19,7 @@ export default function FraudQueue() {
       <div style={s.card}>
         <h3 style={{ fontWeight: 700, fontSize: 15, marginBottom: 14 }}>Fraud Review Queue</h3>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {[
-            { id: "CLM-2901", worker: "Suresh K.", trigger: "Heavy Rain", score: 71, flags: ["GPS spoof detected", "3rd claim in 2 weeks"], status: "review" },
-            { id: "CLM-2888", worker: "Priya R.", trigger: "Curfew", score: 45, flags: ["New account <14 days"], status: "review" },
-            { id: "CLM-2876", worker: "Amit S.", trigger: "Flash Flood", score: 82, flags: ["Network cluster fraud", "Same device as 4 others"], status: "reject" },
-          ].map(item => (
+          {fraudQueueData.map(item => (
             <div key={item.id} style={{ padding: "14px 16px", background: COLORS.bg, borderRadius: 12, border: `1px solid ${item.score > 70 ? COLORS.red : COLORS.gold}66` }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                 <div>

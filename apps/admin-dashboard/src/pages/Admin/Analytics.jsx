@@ -1,18 +1,34 @@
 import React from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { useAppContext } from "../../context/AppContext";
 import { COLORS, s } from "../../theme/theme";
-import { lossRatioData } from "../../data/mockData";
 
 export default function Analytics() {
+  const { analyticsSummary, analyticsSeries } = useAppContext();
+
+  const formatCompact = (value) => {
+    const num = Number(value || 0);
+    if (num >= 10000000) return `Rs. ${(num / 10000000).toFixed(1)} Cr`;
+    if (num >= 100000) return `Rs. ${(num / 100000).toFixed(1)} L`;
+    return `Rs. ${num.toLocaleString("en-IN")}`;
+  };
+
+  const summary = analyticsSummary || {
+    active_policies: 10247,
+    weekly_inflow: 3970000,
+    corpus_aum: 62000000,
+    monthly_loss_ratio_pct: 52,
+  };
+
   return (
     <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 20 }}>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
         {[
-          { label: "Active Policies", value: "10,247", change: "+823 this week", color: COLORS.green, up: true },
-          { label: "Weekly Inflow", value: "Rs. 39.7L", change: "+8.3% vs last week", color: COLORS.blue, up: true },
-          { label: "Corpus Fund AUM", value: "Rs. 6.2 Cr", change: "7.2% avg return", color: COLORS.gold, up: true },
-          { label: "Loss Ratio (Mar)", value: "52%", change: "+17% vs Feb — Monsoon", color: COLORS.red, up: false },
+          { label: "Active Policies", value: Number(summary.active_policies || 0).toLocaleString("en-IN"), change: "Live policy volume", color: COLORS.green, up: true },
+          { label: "Weekly Inflow", value: formatCompact(summary.weekly_inflow), change: "Aggregated weekly premium", color: COLORS.blue, up: true },
+          { label: "Corpus Fund AUM", value: formatCompact(summary.corpus_aum), change: "Total corpus managed", color: COLORS.gold, up: true },
+          { label: "Loss Ratio (Current)", value: `${Number(summary.monthly_loss_ratio_pct || 0).toFixed(1)}%`, change: "Claims vs premium this month", color: COLORS.red, up: false },
         ].map(st => (
           <div key={st.label} style={s.stat}>
             <p style={{ color: COLORS.muted, fontSize: 11, fontWeight: 600 }}>{st.label.toUpperCase()}</p>
@@ -29,7 +45,7 @@ export default function Analytics() {
         <div style={s.card}>
           <h3 style={{ fontWeight: 700, fontSize: 15, marginBottom: 16 }}>Monthly Loss Ratio & Claim Volume</h3>
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={lossRatioData}>
+            <BarChart data={analyticsSeries}>
               <CartesianGrid strokeDasharray="3 3" stroke={COLORS.border} />
               <XAxis dataKey="month" stroke={COLORS.muted} fontSize={10} />
               <YAxis yAxisId="left" stroke={COLORS.muted} fontSize={10} />
