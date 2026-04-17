@@ -7,6 +7,7 @@ import { COLORS, s, tierColors, tierNext, tierThreshold } from "../../theme/them
 export default function WorkerDashboard() {
   const { alertBanner, triggers, workerProfile, scoreHistoryData, claimsData } = useAppContext();
   const gigWorker = workerProfile;
+  const nextTier = tierNext[gigWorker.tier];
   const scoreProgress = Math.min(100, ((gigWorker.gigScore - (gigWorker.tier === "Silver" ? 100 : 0)) / (tierThreshold[gigWorker.tier] - (gigWorker.tier === "Silver" ? 100 : 0))) * 100);
 
   return (
@@ -27,7 +28,7 @@ export default function WorkerDashboard() {
         {[
           { label: "Weekly Premium", value: `Rs. ${gigWorker.policy.weeklyPremium}`, sub: "Silver tier", icon: <CreditCard size={18} color={COLORS.accent} />, color: COLORS.accent },
           { label: "Max Weekly Payout", value: `Rs. ${gigWorker.policy.maxPayout}`, sub: "Active coverage", icon: <Shield size={18} color={COLORS.green} />, color: COLORS.green },
-          { label: "GigScore", value: gigWorker.gigScore, sub: `${gigWorker.tier} → ${tierNext[gigWorker.tier]}`, icon: <Star size={18} color={COLORS.gold} />, color: COLORS.gold },
+          { label: "GigScore", value: gigWorker.gigScore, sub: nextTier ? `${gigWorker.tier} → ${nextTier}` : `${gigWorker.tier} · Top tier`, icon: <Star size={18} color={COLORS.gold} />, color: COLORS.gold },
           { label: "Corpus Invested", value: `Rs. ${gigWorker.corpusInvested}`, sub: `${gigWorker.weeksToMaturity}w to maturity`, icon: <TrendingUp size={18} color={COLORS.purple} />, color: COLORS.purple },
         ].map((st, i) => (
           <div key={i} style={s.stat}>
@@ -78,7 +79,7 @@ export default function WorkerDashboard() {
             </div>
             <div>
               <p style={{ fontWeight: 800, fontSize: 18, color: tierColors[gigWorker.tier] }}>{gigWorker.tier} Tier</p>
-              <p style={{ color: COLORS.muted, fontSize: 12 }}>{tierThreshold[gigWorker.tier] - gigWorker.gigScore} pts to {tierNext[gigWorker.tier]}</p>
+              <p style={{ color: COLORS.muted, fontSize: 12 }}>{nextTier ? `${Math.max(0, tierThreshold[gigWorker.tier] - gigWorker.gigScore)} pts to ${nextTier}` : "Top tier reached"}</p>
               <p style={{ color: COLORS.muted, fontSize: 12, marginTop: 4 }}>🔥 {gigWorker.streak}-week streak</p>
             </div>
           </div>

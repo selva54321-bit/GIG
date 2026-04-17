@@ -170,6 +170,7 @@ function mapLiveTriggersToCards(apiPayload) {
   if (!Array.isArray(zones) || zones.length === 0) return triggerStatuses;
 
   const zone = zones[0];
+  const govtAlerts = Array.isArray(zone.govt_alerts) ? zone.govt_alerts : [];
   return [
     {
       id: "T1",
@@ -210,7 +211,7 @@ function mapLiveTriggersToCards(apiPayload) {
       icon: "🚫",
       api: "State Govt. API + Platform",
       threshold: "Official order issued",
-      current: zone.government?.includes("MOVEMENT_RESTRICTED") ? "Order issued" : "No alerts",
+      current: govtAlerts.includes("MOVEMENT_RESTRICTED") ? "Order issued" : "No alerts",
       status: normalizeTriggerStatus(zone.statuses?.curfew),
       payout: "80–100%",
       color: "#EF4444",
@@ -221,7 +222,7 @@ function mapLiveTriggersToCards(apiPayload) {
       icon: "🌊",
       api: "NDMA Flood Alert API",
       threshold: "Level-3 flood alert",
-      current: zone.government?.includes("FLOOD_WARNING") ? "Flood warning" : "No alert",
+      current: govtAlerts.includes("FLOOD_WARNING") ? "Flood warning" : "No alert",
       status: normalizeTriggerStatus(zone.statuses?.flood),
       payout: "80–100%",
       color: "#06B6D4",

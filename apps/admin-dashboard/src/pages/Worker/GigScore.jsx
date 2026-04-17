@@ -7,6 +7,7 @@ import { COLORS, s, tierColors, tierNext, tierThreshold } from "../../theme/them
 export default function GigScore() {
   const { workerProfile, scoreHistoryData } = useAppContext();
   const gigWorker = workerProfile;
+  const nextTier = tierNext[gigWorker.tier];
   const scoreProgress = Math.min(100, ((gigWorker.gigScore - (gigWorker.tier === "Silver" ? 100 : 0)) / (tierThreshold[gigWorker.tier] - (gigWorker.tier === "Silver" ? 100 : 0))) * 100);
 
   return (
@@ -26,7 +27,7 @@ export default function GigScore() {
               <Award size={24} color={tierColors[gigWorker.tier]} />
               <h2 style={{ fontSize: 28, fontWeight: 800, color: tierColors[gigWorker.tier] }}>{gigWorker.tier} Tier</h2>
             </div>
-            <p style={{ color: COLORS.muted, fontSize: 14 }}>{tierThreshold[gigWorker.tier] - gigWorker.gigScore} more points to reach <strong style={{ color: tierColors[tierNext[gigWorker.tier]] }}>{tierNext[gigWorker.tier]}</strong></p>
+            <p style={{ color: COLORS.muted, fontSize: 14 }}>{nextTier ? <><span>{Math.max(0, tierThreshold[gigWorker.tier] - gigWorker.gigScore)} more points to reach </span><strong style={{ color: tierColors[nextTier] }}>{nextTier}</strong></> : "Top tier reached. Keep consistency for best premium benefits."}</p>
             <div style={{ display: "flex", gap: 16, marginTop: 14 }}>
               {[["🔥", `${gigWorker.streak}-week streak`], ["📅", `${gigWorker.weeksPaid} weeks paid`], ["💸", `Rs. ${gigWorker.policy.weeklyPremium}/wk premium`]].map(([ic, lb]) => (
                 <div key={lb} style={{ textAlign: "center" }}>

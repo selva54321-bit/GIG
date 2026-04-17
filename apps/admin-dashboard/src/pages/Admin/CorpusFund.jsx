@@ -50,7 +50,7 @@ export default function CorpusFund() {
             const color = colors[index % colors.length];
 
             return (
-            <div key={name} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 16px", background: COLORS.bg, borderRadius: 10, border: `1px solid ${COLORS.border}` }}>
+            <div key={item.name} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 16px", background: COLORS.bg, borderRadius: 10, border: `1px solid ${COLORS.border}` }}>
               <div style={{ width: 8, height: 36, borderRadius: 4, background: color }} />
               <div style={{ flex: 1 }}><p style={{ fontWeight: 600, fontSize: 13 }}>{item.name}</p></div>
               <span style={s.tag(color)}>{item.alloc}</span>
