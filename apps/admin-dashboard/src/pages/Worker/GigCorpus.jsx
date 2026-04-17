@@ -71,7 +71,7 @@ export default function GigCorpus() {
               {portfolioRows.map((item, index) => {
                 const color = portfolioColors[index % portfolioColors.length];
                 return (
-                <div key={n} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <div key={item.name} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     <span style={{ width: 8, height: 8, borderRadius: 2, background: color }} />
                     <span style={{ fontSize: 11, color: COLORS.muted }}>{item.name}</span>
