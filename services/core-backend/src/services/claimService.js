@@ -3,6 +3,7 @@ const { calculatePayout, initiatePayoutMock } = require('../utils/payout');
 const { sendNotification } = require('./notificationService');
 const { detectFraudRisk } = require('../utils/mlClient');
 const { query } = require('../db/client');
+const { getErrorMessage } = require('../utils/errors');
 
 /**
  * Zero-Touch Claim Service
@@ -65,7 +66,7 @@ const getActivePoliciesInZone = async (zone) => {
       })),
     };
   } catch (error) {
-    console.error('[Auto-Claim] DB unavailable, using fallback active-policy lookup:', error.message);
+    console.error('[Auto-Claim] DB unavailable, using fallback active-policy lookup:', getErrorMessage(error));
     return {
       source: 'fallback',
       policies: await mockGetActivePoliciesInZone(zone),
@@ -227,7 +228,7 @@ const processAutoClaim = async (zone, triggerType) => {
 
       console.log(`[Auto-Claim] Claim stored for ${policy.user_id} with status ${claim.status}`);
     } catch (error) {
-      console.error(`[Auto-Claim] Failed processing policy ${policy.id}:`, error.message);
+      console.error(`[Auto-Claim] Failed processing policy ${policy.id}:`, getErrorMessage(error));
     }
   }
 };

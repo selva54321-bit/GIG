@@ -4,6 +4,7 @@ const router = express.Router();
 const { calculatePremium } = require('../utils/premium');
 const { calculateWeeklyCycle } = require('../utils/cycle');
 const { query } = require('../db/client');
+const { getErrorMessage } = require('../utils/errors');
 
 const ALLOWED_PLATFORMS = ['Zepto', 'Swiggy', 'Zomato', 'Other'];
 
@@ -123,7 +124,7 @@ router.post('/purchase', async (req, res) => {
         policy: mapPolicyRow(insertedPolicy.rows[0]),
       });
     } catch (dbError) {
-      console.error('[Policy Purchase] DB unavailable, serving fallback response:', dbError.message);
+      console.error('[Policy Purchase] DB unavailable, serving fallback response:', getErrorMessage(dbError));
 
       return res.status(201).json({
         success: true,
@@ -163,7 +164,7 @@ router.get('/active', async (req, res) => {
       policy: mapPolicyRow(activePolicy.rows[0]),
     });
   } catch (dbError) {
-    console.error('[Policy Active] DB unavailable, serving fallback response:', dbError.message);
+    console.error('[Policy Active] DB unavailable, serving fallback response:', getErrorMessage(dbError));
 
     return res.json({
       success: true,

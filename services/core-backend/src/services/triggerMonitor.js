@@ -1,6 +1,7 @@
 const cron = require('node-cron');
 const { getWeatherData, getAQIData, getGovtAlerts } = require('./mockApis');
 const { processAutoClaim } = require('./claimService');
+const { getErrorMessage } = require('../utils/errors');
 
 /**
  * Trigger Monitor Service
@@ -45,7 +46,7 @@ const monitorTriggers = async () => {
     try {
       await processZoneTriggers(zone);
     } catch (error) {
-      console.error(`[TriggerMonitor] Zone processing failed for ${zone}:`, error.message);
+      console.error(`[TriggerMonitor] Zone processing failed for ${zone}:`, getErrorMessage(error));
     }
   }
 
@@ -57,12 +58,12 @@ const monitorTriggers = async () => {
 const startTriggerMonitor = () => {
     // For prototype demonstration, trigger one cycle at startup.
     monitorTriggers().catch((error) => {
-      console.error('[TriggerMonitor] Initial run failed:', error.message);
+      console.error('[TriggerMonitor] Initial run failed:', getErrorMessage(error));
     });
 
     cron.schedule('*/15 * * * *', () => {
         monitorTriggers().catch((error) => {
-          console.error('[TriggerMonitor] Scheduled run failed:', error.message);
+          console.error('[TriggerMonitor] Scheduled run failed:', getErrorMessage(error));
         });
     });
     console.log('[TriggerMonitor] Cron job scheduled for every 15 minutes.');
