@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { query } = require('./client');
+const { getErrorMessage } = require('../utils/errors');
 
 const ROOT_DIR = path.resolve(__dirname, '..', '..');
 const SCHEMA_SQL = path.join(ROOT_DIR, 'database', 'schema.sql');
@@ -92,8 +93,9 @@ async function initializeDatabase() {
     console.log('[DB Init] Database initialization completed.');
     return { initialized: true, skipped: false };
   } catch (error) {
-    console.warn('[DB Init] Database unavailable, continuing in fallback mode:', error.message);
-    return { initialized: false, skipped: false, reason: 'db-unavailable', error: error.message };
+    const message = getErrorMessage(error);
+    console.warn('[DB Init] Database unavailable, continuing in fallback mode:', message);
+    return { initialized: false, skipped: false, reason: 'db-unavailable', error: message };
   }
 }
 
